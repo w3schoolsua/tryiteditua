@@ -1,0 +1,42 @@
+/* ============================
+   БАЗОВІ СТИЛІ ПІДСВІТКИ
+   ============================ */
+
+/* Темна тема (default) */
+.editor-highlight {
+    background-color: #0b1120;
+    color: #e5e7eb;
+}
+
+/* Світла тема */
+body.theme-light .editor-highlight {
+    background-color: #ffffff;
+    color: #1e293b;
+    border-color: #cbd5e1;
+}
+
+/* ============================
+   ТОКЕНИ — ТЕМНА ТЕМА
+   ============================ */
+
+/* Темна тема */
+.token-tag { color: #ff9999; }
+.token-attr-name { color: #c5a5c5; }
+.token-attr-value { color: #99c794; }
+.token-punctuation { color: #ffffff; }
+.token-comment { color: #6a9955; font-style: italic; }
+.token-keyword { color: #c586c0; }
+.token-string { color: #ce9178; }
+.token-number { color: #b5cea8; }
+.token-operator { color: #d4d4d4; }
+
+/* Світла тема */
+body.theme-light .token-tag { color: #d91e18; }
+body.theme-light .token-attr-name { color: #795548; }
+body.theme-light .token-attr-value { color: #2e7d32; }
+body.theme-light .token-punctuation { color: #374151; }
+body.theme-light .token-comment { color: #9ca3af; }
+body.theme-light .token-keyword { color: #6a1b9a; }
+body.theme-light .token-string { color: #1b5e20; }
+body.theme-light .token-number { color: #ad1457; }
+body.theme-light .token-operator { color: #111827; }
