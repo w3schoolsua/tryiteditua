@@ -165,6 +165,7 @@
         editorHighlight.scrollTop = editorInput.scrollTop;
         editorHighlight.scrollLeft = editorInput.scrollLeft;
     }
+    editorInput.addEventListener('scroll', syncScroll);
 
     function runCode() {
         const doc = resultFrame.contentDocument;
