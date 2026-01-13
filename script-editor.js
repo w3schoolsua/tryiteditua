@@ -197,7 +197,6 @@
         runCode();
     }
 
-    // Події вводу
     editorInput.addEventListener('input', () => {
         const code = editorInput.value;
         saveCode(currentLang, code);
@@ -209,17 +208,14 @@
 
     editorInput.addEventListener('scroll', syncScroll);
 
-    // Вкладки
     tabs.forEach(tab =>
         tab.addEventListener('click', () => setTab(tab.dataset.lang))
     );
 
-    // Кнопка "Запустити"
     if (runButton) {
         runButton.addEventListener('click', runCode);
     }
 
-    // Кнопка "Скинути код"
     if (resetButton) {
         resetButton.addEventListener('click', () => {
             const def = defaultSnippets[currentLang];
@@ -231,7 +227,6 @@
         });
     }
 
-    // Кнопка "Копіювати код"
     if (copyButton) {
         copyButton.addEventListener('click', () => {
             navigator.clipboard.writeText(editorInput.value).then(() => {
@@ -244,7 +239,6 @@
         });
     }
 
-    // Drag‑resize
     if (divider) {
         let isDragging = false;
 
@@ -275,6 +269,5 @@
         });
     }
 
-    // Старт
     setTab('html');
 })();

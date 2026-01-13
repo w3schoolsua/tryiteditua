@@ -238,31 +238,29 @@ body.theme-dark .tab.active {
   font-family: var(--font-mono);
   font-size: 0.9rem;
   line-height: 1.45;
-
-  /* ВИПРАВЛЕННЯ СКРОЛУ ТА ПЕРЕНОСУ */
-  overflow-y: auto;
-  overflow-x: hidden;
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: break-word;
-
   tab-size: 2;
 }
 
-/* Підсвітка — нижній шар */
+/* Підсвітка — нижній шар, не скролиться сама */
 .editor-highlight {
+  overflow: hidden;
   pointer-events: none;
 }
 
-/* textarea — верхній шар, приймає скрол і ввод */
+/* textarea — верхній шар, єдиний, хто скролиться */
 .editor-input {
-  z-index: 3;
-  pointer-events: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: transparent;
   color: transparent;
   caret-color: #f97316;
   border: none;
   resize: none;
+  z-index: 3;
+  pointer-events: auto;
 }
 
 body.theme-light .editor-highlight {
@@ -270,6 +268,7 @@ body.theme-light .editor-highlight {
   color: #1e293b;
   border-color: var(--border-light);
 }
+
 /* Прев’ю */
 
 .preview-wrapper {
