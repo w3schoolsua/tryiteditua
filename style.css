@@ -235,19 +235,34 @@ body.theme-dark .tab.active {
   margin: 0;
   padding: 0.75rem;
   border-radius: 0.5rem;
-  font-family: var(--font-mono), sans-serif;
+  font-family: var(--font-mono);
   font-size: 0.9rem;
   line-height: 1.45;
-  overflow: auto;
-  white-space: pre;
+
+  /* ВИПРАВЛЕННЯ СКРОЛУ ТА ПЕРЕНОСУ */
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+
   tab-size: 2;
 }
 
+/* Підсвітка — нижній шар */
 .editor-highlight {
   pointer-events: none;
-  background: #0b1120;
-  color: #e5e7eb;
-  border: 1px solid var(--border-dark);
+}
+
+/* textarea — верхній шар, приймає скрол і ввод */
+.editor-input {
+  z-index: 3;
+  pointer-events: auto;
+  background: transparent;
+  color: transparent;
+  caret-color: #f97316;
+  border: none;
+  resize: none;
 }
 
 body.theme-light .editor-highlight {
@@ -255,16 +270,6 @@ body.theme-light .editor-highlight {
   color: #1e293b;
   border-color: var(--border-light);
 }
-
-.editor-input {
-  background: transparent;
-  color: transparent;
-  caret-color: #f97316;
-  border: none;
-  resize: none;
-  z-index: 2;
-}
-
 /* Прев’ю */
 
 .preview-wrapper {
