@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>TryIt Editor – Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style-editor.css">
+</head>
+<body class="theme-light layout-horizontal">
+<header class="site-header">
+  <div class="site-title">
+    <span class="site-title-main">TryIt Editor</span>
+    <span class="site-title-sub">Легкий автономний редактор коду</span>
+  </div>
+  <nav class="site-actions">
+    <button type="button" class="icon-button" id="homeButton" title="Головна сторінка">
+      <span class="icon">🏠</span>
+    </button>
+    <button type="button" class="icon-button" id="orientationButton" title="Змінити орієнтацію редактора">
+      <span class="icon">🔄</span>
+    </button>
+    <button type="button" class="icon-button" id="themeButton" title="Змінити тему">
+      <span class="icon">🌗</span>
+    </button>
+  </nav>
+</header>
+
+<main class="editor-layout">
+  <section class="editor-panel" aria-label="Редактор коду">
+    <header class="panel-header">
+      <span class="panel-title">Код</span>
+
+      <div class="tabs">
+        <button class="tab active" data-lang="html">HTML</button>
+        <button class="tab" data-lang="css">CSS</button>
+        <button class="tab" data-lang="js">JS</button>
+      </div>
+
+      <div class="panel-actions">
+        <button class="icon-button small" id="copyButton" title="Копіювати код">📋</button>
+        <button class="icon-button small" id="resetButton" title="Скинути код">♻️</button>
+        <button type="button" class="run-button" id="runButton">Запустити ▶</button>
+      </div>
+    </header>
+
+    <div class="editor-wrapper">
+      <pre class="editor-highlight" aria-hidden="true"><code id="editorHighlight"></code></pre>
+      <textarea id="editorInput" class="editor-input" spellcheck="false" aria-label="Поле редагування коду"></textarea>
+    </div>
+  </section>
+
+  <div id="dragDivider"></div>
+
+  <section class="preview-panel" aria-label="Результат виконання коду">
+    <header class="panel-header">
+      <span class="panel-title">Результат</span>
+    </header>
+    <div class="preview-wrapper">
+      <iframe id="resultFrame" title="Результат коду"></iframe>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <span>© <span id="currentYear"></span> W3SchoolsUA TryIt Demo</span>
+</footer>
+
+<script src="script.js" defer></script>
+<script src="script-editor.js" defer></script>
+</body>
+</html>

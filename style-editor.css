@@ -1,0 +1,112 @@
+/* Темна тема редактора */
+body.theme-dark .editor-highlight {
+    background-color: #0b1120;
+    color: #e5e7eb;
+    border-color: #1f2937;
+}
+
+/* Світла тема редактора */
+body.theme-light .editor-highlight {
+    background-color: #ffffff;
+    color: #1e293b;
+    border-color: #d4d4d8;
+}
+
+/* Токени — темна тема */
+
+body.theme-dark .token-tag {
+    color: #ff6b6b;
+}
+
+body.theme-dark .token-attr-name {
+    color: #facc15;
+}
+
+body.theme-dark .token-attr-value {
+    color: #4ade80;
+}
+
+body.theme-dark .token-punctuation {
+    color: #e5e7eb;
+}
+
+body.theme-dark .token-comment {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+body.theme-dark .token-keyword {
+    color: #c586c0;
+}
+
+body.theme-dark .token-string {
+    color: #ce9178;
+}
+
+body.theme-dark .token-number {
+    color: #b5cea8;
+}
+
+body.theme-dark .token-operator {
+    color: #d4d4d4;
+}
+
+/* Токени — світла тема */
+
+body.theme-light .token-tag {
+    color: #d91e18;
+}
+
+body.theme-light .token-attr-name {
+    color: #795548;
+}
+
+body.theme-light .token-attr-value {
+    color: #2e7d32;
+}
+
+body.theme-light .token-punctuation {
+    color: #374151;
+}
+
+body.theme-light .token-comment {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+body.theme-light .token-keyword {
+    color: #6a1b9a;
+}
+
+body.theme-light .token-string {
+    color: #1b5e20;
+}
+
+body.theme-light .token-number {
+    color: #ad1457;
+}
+
+body.theme-light .token-operator {
+    color: #111827;
+}
+
+/* Скролбар (для textarea) */
+
+.editor-input {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #888 transparent;
+}
+
+.editor-input::-webkit-scrollbar {
+    width: 8px;
+}
+
+.editor-input::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+}
+
+.editor-input::-webkit-scrollbar-track {
+    background: transparent;
+}
