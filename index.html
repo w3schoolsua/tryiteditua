@@ -40,13 +40,20 @@
       <div class="panel-actions">
         <button class="icon-button small" id="copyButton" title="Копіювати код">📋</button>
         <button class="icon-button small" id="resetButton" title="Скинути код">♻️</button>
+        <button class="icon-button small" id="formatButton" title="Форматувати код">✨</button>
         <button type="button" class="run-button" id="runButton">Запустити ▶</button>
       </div>
     </header>
 
     <div class="editor-wrapper">
+      <!-- Колонка з номерами рядків -->
+      <div id="lineNumbers" class="editor-lines"></div>
+
+      <!-- Підсвітка коду -->
       <pre id="editorHighlight" class="editor-highlight" aria-hidden="true"></pre>
-      <textarea id="editorInput" class="editor-input" spellcheck="false" aria-label="Поле редагування коду"></textarea>
+
+      <!-- Поле вводу -->
+      <textarea id="editorInput" class="editor-input" spellcheck="false"></textarea>
     </div>
   </section>
 

@@ -1,7 +1,6 @@
 (function () {
     const editorInput = document.getElementById('editorInput');
     const editorHighlight = document.getElementById('editorHighlight');
-    const lineNumbers = document.getElementById('lineNumbers');
     const resultFrame = document.getElementById('resultFrame');
     const runButton = document.getElementById('runButton');
     const resetButton = document.getElementById('resetButton');
@@ -10,7 +9,54 @@
     const tabs = document.querySelectorAll('.tab');
     const divider = document.getElementById('dragDivider');
 
-    if (!editorInput || !editorHighlight || !lineNumbers || !resultFrame) return;
+    // ===============================
+// BEAUTIFIER — форматування коду
+// ===============================
+
+// Форматування HTML
+    function beautifyHTML(code) {
+        let formatted = '';
+        let indent = 0;
+        const tab = '  ';
+
+        code = code.replace(/>\s+</g, '><'); // прибираємо зайві пробіли між тегами
+
+        code.split(/(?=<)/g).forEach(line => {
+            if (line.match(/^<\/\w/)) indent--;
+            formatted += tab.repeat(indent) + line.trim() + '\n';
+            if (line.match(/^<\w[^>]*[^\/]>$/)) indent++;
+        });
+
+        return formatted.trim();
+    }
+
+// Форматування CSS
+    function beautifyCSS(code) {
+        let formatted = '';
+        let indent = 0;
+        const tab = '  ';
+
+        code.split('\n').forEach(line => {
+            line = line.trim();
+            if (line.endsWith('}')) indent--;
+            formatted += tab.repeat(indent) + line + '\n';
+            if (line.endsWith('{')) indent++;
+        });
+
+        return formatted.trim();
+    }
+
+// Форматування JS (легке)
+    function beautifyJS(code) {
+        return code
+            .replace(/;\s*/g, ';\n')
+            .replace(/{\s*/g, '{\n')
+            .replace(/}\s*/g, '}\n')
+            .replace(/\n{2,}/g, '\n')
+            .trim();
+    }
+
+    if (!editorInput || !editorHighlight || !resultFrame) return;
 
     const STORAGE_KEYS = {
         html: 'tryit-code-html',
@@ -52,54 +98,6 @@
 
     let currentLang = 'html';
     let autoRunTimer = null;
-
-    // -------------------------
-    // BEAUTIFIER — форматування
-    // -------------------------
-
-    function beautifyHTML(code) {
-        let formatted = '';
-        let indent = 0;
-        const tab = '  ';
-
-        code = code.replace(/>\s+</g, '><');
-
-        code.split(/(?=<)/g).forEach(line => {
-            if (line.match(/^<\/\w/)) indent--;
-            formatted += tab.repeat(indent) + line.trim() + '\n';
-            if (line.match(/^<\w[^>]*[^\/]>$/)) indent++;
-        });
-
-        return formatted.trim();
-    }
-
-    function beautifyCSS(code) {
-        let formatted = '';
-        let indent = 0;
-        const tab = '  ';
-
-        code.split('\n').forEach(line => {
-            line = line.trim();
-            if (line.endsWith('}')) indent--;
-            formatted += tab.repeat(indent) + line + '\n';
-            if (line.endsWith('{')) indent++;
-        });
-
-        return formatted.trim();
-    }
-
-    function beautifyJS(code) {
-        return code
-            .replace(/;\s*/g, ';\n')
-            .replace(/{\s*/g, '{\n')
-            .replace(/}\s*/g, '}\n')
-            .replace(/\n{2,}/g, '\n')
-            .trim();
-    }
-
-    // -------------------------
-    // Допоміжні функції
-    // -------------------------
 
     function loadCode(lang) {
         return localStorage.getItem(STORAGE_KEYS[lang]) || defaultSnippets[lang];
@@ -198,13 +196,8 @@
         return html;
     }
 
-    // -------------------------
-    // Підсвітка + нумерація
-    // -------------------------
-
     function updateHighlight() {
         const code = editorInput.value;
-
         let highlighted = '';
 
         if (currentLang === 'html') highlighted = highlightHTML(code);
@@ -212,52 +205,15 @@
         else if (currentLang === 'js') highlighted = highlightJS(code);
         else highlighted = escapeHtml(code);
 
-        const lines = highlighted.split('\n');
-
-        editorHighlight.innerHTML = lines
-            .map(line => `<div class="hl-line">${line || '&nbsp;'}</div>`)
-            .join('');
-    }
-
-    function updateLineNumbers() {
-        const lines = editorInput.value.split('\n').length;
-
-        let out = '';
-        for (let i = 1; i <= lines; i++) {
-            out += `<div class="line-number" data-line="${i}">${i}</div>`;
-        }
-
-        lineNumbers.innerHTML = out;
-    }
-
-    function highlightActiveLine() {
-        const pos = editorInput.selectionStart;
-        const textBefore = editorInput.value.substring(0, pos);
-        const lineIndex = textBefore.split('\n').length - 1;
-
-        const lines = editorHighlight.querySelectorAll('.hl-line');
-        lines.forEach(l => l.classList.remove('active-line'));
-        if (lines[lineIndex]) {
-            lines[lineIndex].classList.add('active-line');
-        }
-
-        const nums = lineNumbers.querySelectorAll('.line-number');
-        nums.forEach(n => n.classList.remove('active-line-number'));
-        const activeNum = lineNumbers.querySelector(`.line-number[data-line="${lineIndex + 1}"]`);
-        if (activeNum) activeNum.classList.add('active-line-number');
+        editorHighlight.innerHTML =
+            highlighted + (code.endsWith('\n') ? '\n' : '');
     }
 
     function syncScroll() {
         editorHighlight.scrollTop = editorInput.scrollTop;
         editorHighlight.scrollLeft = editorInput.scrollLeft;
-        lineNumbers.scrollTop = editorInput.scrollTop;
     }
-
     editorInput.addEventListener('scroll', syncScroll);
-
-    // -------------------------
-    // Виконання коду
-    // -------------------------
 
     function runCode() {
         const doc = resultFrame.contentDocument;
@@ -286,37 +242,24 @@
 
         editorInput.value = loadCode(lang);
         updateHighlight();
-        updateLineNumbers();
-        highlightActiveLine();
         syncScroll();
         runCode();
     }
-
-    // -------------------------
-    // Події вводу
-    // -------------------------
 
     editorInput.addEventListener('input', () => {
         const code = editorInput.value;
         saveCode(currentLang, code);
         updateHighlight();
-        updateLineNumbers();
-        highlightActiveLine();
 
         clearTimeout(autoRunTimer);
         autoRunTimer = setTimeout(runCode, 400);
     });
 
-    editorInput.addEventListener('click', highlightActiveLine);
-    editorInput.addEventListener('keyup', highlightActiveLine);
+    editorInput.addEventListener('scroll', syncScroll);
 
     tabs.forEach(tab =>
         tab.addEventListener('click', () => setTab(tab.dataset.lang))
     );
-
-    // -------------------------
-    // Кнопки
-    // -------------------------
 
     if (runButton) {
         runButton.addEventListener('click', runCode);
@@ -328,13 +271,12 @@
             editorInput.value = def;
             saveCode(currentLang, def);
             updateHighlight();
-            updateLineNumbers();
-            highlightActiveLine();
             syncScroll();
             runCode();
         });
     }
 
+    // Кнопка "Форматувати"
     if (formatButton) {
         formatButton.addEventListener('click', () => {
             let code = editorInput.value;
@@ -346,8 +288,6 @@
             editorInput.value = code;
             saveCode(currentLang, code);
             updateHighlight();
-            updateLineNumbers();
-            highlightActiveLine();
             syncScroll();
         });
     }
@@ -363,10 +303,6 @@
             });
         });
     }
-
-    // -------------------------
-    // Drag‑resize
-    // -------------------------
 
     if (divider) {
         let isDragging = false;
@@ -397,10 +333,6 @@
             }
         });
     }
-
-    // -------------------------
-    // Старт
-    // -------------------------
 
     setTab('html');
 })();
