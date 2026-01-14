@@ -9,6 +9,7 @@
     const formatButton = document.getElementById('formatButton');
     const tabs = document.querySelectorAll('.tab');
     const divider = document.getElementById('dragDivider');
+    const autocompleteBox = document.getElementById('autocomplete');
 
     if (!editorInput || !editorHighlight || !lineNumbers || !resultFrame) return;
 
@@ -16,6 +17,35 @@
         html: 'tryit-code-html',
         css: 'tryit-code-css',
         js: 'tryit-code-js'
+    };
+
+    const AUTOCOMPLETE_DATA = {
+        html: [
+            { key: "div", snippet: "<div>|</div>" },
+            { key: "span", snippet: "<span>|</span>" },
+            { key: "p", snippet: "<p>|</p>" },
+            { key: "h1", snippet: "<h1>|</h1>" },
+            { key: "h2", snippet: "<h2>|</h2>" },
+            { key: "ul", snippet: "<ul>\n  <li>|</li>\n</ul>" },
+            { key: "li", snippet: "<li>|</li>" },
+            { key: "button", snippet: "<button>|</button>" },
+            { key: "input", snippet: "<input>|" }
+        ],
+
+        css: [
+            { key: "display", snippet: "display: ;" },
+            { key: "margin", snippet: "margin: ;" },
+            { key: "padding", snippet: "padding: ;" },
+            { key: "color", snippet: "color: ;" },
+            { key: "background", snippet: "background: ;" }
+        ],
+
+        js: [
+            { key: "function", snippet: "function name() {\n  \n}" },
+            { key: "for", snippet: "for (let i = 0; i < ; i++) {\n  \n}" },
+            { key: "if", snippet: "if () {\n  \n}" },
+            { key: "log", snippet: "console.log();" }
+        ]
     };
 
     const defaultSnippets = {
@@ -256,6 +286,79 @@
     editorInput.addEventListener('scroll', syncScroll);
 
     // -------------------------
+    // AUTOCOMPLETE
+    // -------------------------
+
+    function getCurrentWord() {
+        const pos = editorInput.selectionStart;
+        const text = editorInput.value.substring(0, pos);
+        const match = text.match(/[\w-]+$/);
+        return match ? match[0] : "";
+    }
+
+    function showAutocomplete() {
+        if (!autocompleteBox) return;
+
+        const word = getCurrentWord();
+        if (!word) {
+            autocompleteBox.classList.add("hidden");
+            return;
+        }
+
+        const list = (AUTOCOMPLETE_DATA[currentLang] || [])
+            .filter(item => item.key.startsWith(word))   // ← ВАЖЛИВО
+            .slice(0, 20);
+
+        if (list.length === 0) {
+            autocompleteBox.classList.add("hidden");
+            return;
+        }
+
+        autocompleteBox.innerHTML = list
+            .map((item, i) =>
+                `<div data-value="${item.snippet}" data-key="${item.key}" class="${i === 0 ? 'selected' : ''}">
+         ${item.key}
+       </div>`
+            )
+            .join("");
+
+        const rect = editorInput.getBoundingClientRect();
+        autocompleteBox.style.left = rect.left + 10 + "px";
+        autocompleteBox.style.top = rect.top + 40 + "px";
+
+        autocompleteBox.classList.remove("hidden");
+    }
+
+    function insertAutocomplete(snippet) {
+        const pos = editorInput.selectionStart;
+        const text = editorInput.value;
+        const word = getCurrentWord();
+
+        const start = pos - word.length;
+
+        // Вставляємо сніппет
+        const before = text.substring(0, start);
+        const after = text.substring(pos);
+
+        // Знаходимо позицію курсора
+        const cursorIndex = snippet.indexOf("|");
+        const cleanSnippet = snippet.replace("|", "");
+
+        editorInput.value = before + cleanSnippet + after;
+
+        // Ставимо курсор у потрібне місце
+        const newPos = start + cursorIndex;
+        editorInput.selectionStart = editorInput.selectionEnd = newPos;
+
+        // Оновлюємо все
+        updateHighlight();
+        updateLineNumbers();
+        highlightActiveLine();
+
+        autocompleteBox.classList.add("hidden");
+    }
+
+    // -------------------------
     // Виконання коду
     // -------------------------
 
@@ -305,10 +408,69 @@
 
         clearTimeout(autoRunTimer);
         autoRunTimer = setTimeout(runCode, 400);
+
+        showAutocomplete();
     });
 
-    editorInput.addEventListener('click', highlightActiveLine);
-    editorInput.addEventListener('keyup', highlightActiveLine);
+    editorInput.addEventListener('click', () => {
+        highlightActiveLine();
+        showAutocomplete();
+    });
+
+    editorInput.addEventListener('keyup', (e) => {
+        if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
+            showAutocomplete();
+        }
+    });
+
+    editorInput.addEventListener("keydown", (e) => {
+        if (autocompleteBox.classList.contains("hidden")) return;
+
+        const items = [...autocompleteBox.querySelectorAll("div")];
+        if (items.length === 0) return;
+
+        let index = items.findIndex(i => i.classList.contains("selected"));
+        if (index === -1) index = 0;
+
+        // Навігація ↑ ↓
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            items[index].classList.remove("selected");
+            index = (index + 1) % items.length;
+            items[index].classList.add("selected");
+            return;
+        }
+
+        if (e.key === "ArrowUp") {
+            e.preventDefault();
+            items[index].classList.remove("selected");
+            index = (index - 1 + items.length) % items.length;
+            items[index].classList.add("selected");
+            return;
+        }
+
+        // ВСТАВКА ПІДКАЗКИ ПО ENTER / TAB
+        if (e.key === "Enter" || e.key === "Tab") {
+            e.preventDefault(); // блокуємо textarea
+            const value = items[index].dataset.value;
+            insertAutocomplete(value);
+            return;
+        }
+
+        // ESC — закрити
+        if (e.key === "Escape") {
+            autocompleteBox.classList.add("hidden");
+            return;
+        }
+    });
+
+    if (autocompleteBox) {
+        autocompleteBox.addEventListener("click", (e) => {
+            if (e.target.dataset.value) {
+                insertAutocomplete(e.target.dataset.value);
+            }
+        });
+    }
 
     tabs.forEach(tab =>
         tab.addEventListener('click', () => setTab(tab.dataset.lang))

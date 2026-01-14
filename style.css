@@ -388,6 +388,39 @@ body.theme-dark .site-footer {
   border-top-color: var(--border-dark);
 }
 
+/* СТИЛІ ДЛЯ POPUP */
+.autocomplete {
+  position: absolute;
+  z-index: 10;
+  background: #fff;
+  border: 1px solid #d4d4d8;
+  border-radius: 0.3rem;
+  font-family: var(--font-mono), serif;
+  font-size: 0.85rem;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+body.theme-dark .autocomplete {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.autocomplete.hidden {
+  display: none;
+}
+
+.autocomplete div {
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.autocomplete div:hover,
+.autocomplete .selected {
+  background: var(--accent-soft);
+}
+
 /* Адаптивність */
 
 @media (max-width: 768px) {
